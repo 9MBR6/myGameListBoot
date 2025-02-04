@@ -8,21 +8,111 @@
 <h1 class="text-center">Editar Juego</h1>
 <form th:action="@{/juegos/update}" th:object="${juego}" method="post">
     <input type="hidden" th:field="*{id}">
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">Título</label>
+                <input type="text" class="form-control" th:field="*{titulo}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Plataforma</label>
+                <input type="text" class="form-control" th:field="*{plataforma}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Género</label>
+                <input type="text" class="form-control" th:field="*{genero}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Desarrollador</label>
+                <input type="text" class="form-control" th:field="*{desarrollador}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Horas Jugadas</label>
+                <input type="number" class="form-control" th:field="*{horasJugadas}" min="0">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Calificación</label>
+                <input type="number" class="form-control" th:field="*{calificacion}" min="0" max="10">
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">URL de la portada</label>
+                <input type="url" class="form-control" th:field="*{portadaUrl}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Estado</label>
+                <select class="form-control" th:field="*{estado}">
+                    <option th:each="estado : ${T(es.dtgz.myGameListBoot.model.EstadoJuego).values()}"
+                            th:value="${estado}" th:text="${estado}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Dificultad</label>
+                <select class="form-control" th:field="*{dificultad}">
+                    <option th:each="dificultad : ${T(es.dtgz.myGameListBoot.model.Dificultad).values()}"
+                            th:value="${dificultad}" th:text="${dificultad}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Rejugabilidad</label>
+                <select class="form-control" th:field="*{replayability}">
+                    <option th:each="replay : ${T(es.dtgz.myGameListBoot.model.Replayability).values()}"
+                            th:value="${replay}" th:text="${replay}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Saga</label>
+                <input type="number" class="form-control" th:field="*{saga}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Recomendación</label>
+                <input type="text" class="form-control" th:field="*{recomendacion}">
+            </div>
+        </div>
+    </div>
+
+    <!-- Reseña y Resumen en una fila completa -->
     <div class="mb-3">
-        <label class="form-label">Título</label>
-        <input type="text" class="form-control" th:field="*{titulo}" required>
+        <label class="form-label">Resumen</label>
+        <textarea class="form-control" th:field="*{resumen}"></textarea>
     </div>
     <div class="mb-3">
-        <label class="form-label">Plataforma</label>
-        <input type="text" class="form-control" th:field="*{plataforma}">
+        <label class="form-label">Reseña</label>
+        <textarea class="form-control" th:field="*{reseña}"></textarea>
     </div>
-    <div class="mb-3">
-        <label class="form-label">Género</label>
-        <input type="text" class="form-control" th:field="*{genero}">
+
+    <!-- Fechas en 3 columnas -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="mb-3">
+                <label class="form-label">Fecha de Lanzamiento</label>
+                <input type="date" class="form-control" th:field="*{fechaLanzamiento}">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="mb-3">
+                <label class="form-label">Fecha de Inicio</label>
+                <input type="date" class="form-control" th:field="*{fechaInicio}">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="mb-3">
+                <label class="form-label">Fecha de Finalización</label>
+                <input type="date" class="form-control" th:field="*{fechaFin}">
+            </div>
+        </div>
     </div>
-    <button type="submit" class="btn btn-warning">Actualizar</button>
-    <a class="btn btn-secondary" th:href="@{/juegos}">Cancelar</a>
+
+    <!-- Botones -->
+    <div class="text-center mt-3">
+        <button type="submit" class="btn btn-warning">Actualizar</button>
+        <a class="btn btn-secondary" th:href="@{/juegos}">Cancelar</a>
+    </div>
 </form>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
