@@ -1,5 +1,7 @@
 package es.dtgz.myGameListBoot.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import es.dtgz.myGameListBoot.model.Juego;
 import es.dtgz.myGameListBoot.service.JuegoService;
 import org.slf4j.Logger;
@@ -8,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/juegos")
@@ -70,5 +75,34 @@ public class JuegoController {
         );
         return "redirect:/juegos";
     }
+
+    @GetMapping("/completados")
+    public String getJuegosCompletados(Model model) {
+        List<Juego> juegosCompletados = juegoService.getJuegosCompletados();
+        model.addAttribute("juegos", juegosCompletados);
+        return "juegos/completados"; // Nombre de la vista en Thymeleaf
+    }
+
+    @GetMapping("/estadisticas")
+    public String estadisticas(Model model) throws JsonProcessingException {
+        Map<String, Long> estadisticasEstados = juegoService.obtenerEstadisticasEstados();
+        Map<String, Long> estadisticasPlataformas = juegoService.obtenerEstadisticasPlataformas();
+
+        // Convertir mapas a JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+        String estadisticasEstadosJson = objectMapper.writeValueAsString(estadisticasEstados);
+        String estadisticasPlataformasJson = objectMapper.writeValueAsString(estadisticasPlataformas);
+
+        // Debug: Imprimir las estadísticas para verificar
+        System.out.println("Estadísticas de Estados: " + estadisticasEstados);
+        System.out.println("Estadísticas de Plataformas: " + estadisticasPlataformas);
+
+        // Pasar los datos JSON a Thymeleaf
+        model.addAttribute("estadisticasEstados", estadisticasEstadosJson);
+        model.addAttribute("estadisticasPlataformas", estadisticasPlataformasJson);
+        return "juegos/estadisticas";
+    }
+
+
 
 }

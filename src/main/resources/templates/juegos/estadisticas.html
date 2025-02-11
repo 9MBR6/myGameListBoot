@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Estadísticas de Juegos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+        background-color: #f8f9fa;
+        display: flex;
+        height: 100vh;
+        margin: 0;
+    }
+    .sidebar {
+        width: 250px;
+        background: #343a40;
+        color: white;
+        padding: 20px;
+        position: fixed;
+        height: 100%;
+    }
+    .sidebar a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    .sidebar a:hover {
+        background: #495057;
+    }
+    .content {
+        margin-left: 270px;
+        flex-grow: 1;
+        padding: 20px;
+    }
+    .card {
+        margin-top: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h4 class="text-center">Menú</h4>
+  <a class="nav-link text-white" th:href="@{/usuario/perfil}">Mi Perfil</a>
+  <a class="nav-link text-white" th:href="@{/juegos}">Lista de Juegos</a>
+  <a class="nav-link text-white" th:href="@{/juegos/estadisticas}">Estadísticas</a>
+</div>
+
+<div class="content">
+  <h1 class="text-center">Estadísticas de Juegos</h1>
+
+  <!-- Mostrar las estadísticas para ver si los datos están llegando -->
+  <p>Estadísticas de Estados: <span th:text="${estadisticasEstados}"></span></p>
+  <p>Estadísticas de Plataformas: <span th:text="${estadisticasPlataformas}"></span></p>
+
+  <!-- Gráfico de Estados de Juegos -->
+  <div class="card p-3">
+    <h5 class="text-center">Distribución de Estados de Juegos</h5>
+    <canvas id="estadoJuegosChart" width="400" height="400"></canvas>
+  </div>
+
+  <!-- Gráfico de Juegos por Plataforma -->
+  <div class="card p-3">
+    <h5 class="text-center">Cantidad de Juegos por Plataforma</h5>
+    <canvas id="plataformaChart" width="400" height="400"></canvas>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      // Asegúrate de que los datos se están inyectando correctamente desde Thymeleaf
+      console.log("Estadísticas de Estados (JSON):", /*[[${estadisticasEstados}]]*/ '');
+      console.log("Estadísticas de Plataformas (JSON):", /*[[${estadisticasPlataformas}]]*/ '');
+
+      var estadisticasEstados = JSON.parse(/*[[${estadisticasEstados}]]*/ '{}');
+      var estadisticasPlataformas = JSON.parse(/*[[${estadisticasPlataformas}]]*/ '{}');
+
+      // Verificación de los datos
+      console.log("Estados:", estadisticasEstados);
+      console.log("Plataformas:", estadisticasPlataformas);
+
+      // Verificar si los objetos contienen datos antes de graficar
+      if (Object.keys(estadisticasEstados).length > 0 && Object.keys(estadisticasPlataformas).length > 0) {
+          // Gráfico de Estados de Juegos
+          var ctxEstados = document.getElementById("estadoJuegosChart").getContext("2d");
+          new Chart(ctxEstados, {
+              type: "pie",
+              data: {
+                  labels: Object.keys(estadisticasEstados),
+                  datasets: [{
+                      data: Object.values(estadisticasEstados),
+                      backgroundColor: ["#28a745", "#007bff", "#ffc107", "#dc3545"]
+                  }]
+              }
+          });
+
+          // Gráfico de Juegos por Plataforma
+          var ctxPlataformas = document.getElementById("plataformaChart").getContext("2d");
+          new Chart(ctxPlataformas, {
+              type: "bar",
+              data: {
+                  labels: Object.keys(estadisticasPlataformas),
+                  datasets: [{
+                      label: "Cantidad de Juegos",
+                      data: Object.values(estadisticasPlataformas),
+                      backgroundColor: "#007bff"
+                  }]
+              }
+          });
+      } else {
+          console.error("No se recibieron datos válidos para los gráficos");
+      }
+  });
+</script>
+
+</body>
+</html>
