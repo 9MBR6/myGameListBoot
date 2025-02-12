@@ -9,59 +9,69 @@ import lombok.Setter;
 
 import java.sql.Date;
 
+/**
+ * Representa un juego en el sistema.
+ *
+ * Esta clase se mapea a la tabla "juegos" en la base de datos y contiene todos los atributos
+ * necesarios para almacenar información sobre un juego, como su título, plataforma, género, etc.
+ * Además, se utilizan anotaciones para la validación de campos y la configuración de la persistencia.
+ */
 @Entity
 @Table(name = "juegos")
 @Getter
 @Setter
 public class Juego {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // Identificador único del juego
 
     @NotBlank
     @Column(nullable = false, length = 255)
-    private String titulo;
+    private String titulo; // Título del juego
 
     @Column(length = 50)
-    private String plataforma;
+    private String plataforma; // Plataforma en la que se juega (ej. PC, PS5, etc.)
 
     @Column(length = 50)
-    private String genero;
+    private String genero; // Género del juego (ej. Aventura, Acción, etc.)
 
     @Column(length = 255)
-    private String desarrollador;
+    private String desarrollador; // Desarrollador del juego
 
-    private String portadaUrl;
-
-    @Lob
-    private String resumen;
+    private String portadaUrl; // URL de la portada del juego
 
     @Lob
-    private String reseña;
+    private String resumen; // Resumen del juego
+
+    @Lob
+    private String reseña; // Reseña del juego
 
     @Enumerated(EnumType.STRING)
-    private EstadoJuego estado = EstadoJuego.PENDIENTE;
+    private EstadoJuego estado = EstadoJuego.PENDIENTE; // Estado del juego (ej. PENDIENTE, COMPLETADO)
 
     @Enumerated(EnumType.STRING)
-    private Dificultad dificultad = Dificultad.NORMAL;
+    private Dificultad dificultad = Dificultad.NORMAL; // Dificultad del juego (ej. NORMAL, DIFÍCIL)
 
     @Enumerated(EnumType.STRING)
-    private Replayability replayability = Replayability.TAL_VEZ;
+    private Replayability replayability = Replayability.TAL_VEZ; // Rejugabilidad del juego
 
     @Min(0)
-    private Integer horasJugadas = 0;
+    private Integer horasJugadas = 0; // Horas jugadas en el juego
 
     @Min(0)
     @Max(10)
-    private Integer calificacion;
+    private Integer calificacion; // Calificación del juego (de 0 a 10)
 
-    private String recomendacion;
+    private String recomendacion; // Recomendación sobre el juego
 
-    private Integer saga;
+    private Integer saga; // Número de saga del juego (si es parte de una saga)
 
-    private java.sql.Date fechaLanzamiento;
-    private java.sql.Date fechaInicio;
-    private java.sql.Date fechaFin;
+    private java.sql.Date fechaLanzamiento; // Fecha de lanzamiento del juego
+
+    private java.sql.Date fechaInicio; // Fecha en la que se comenzó a jugar
+
+    private java.sql.Date fechaFin; // Fecha en la que se terminó de jugar
 
     public Long getId() {
         return id;
@@ -127,20 +137,20 @@ public class Juego {
         this.reseña = reseña;
     }
 
-    public EstadoJuego getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoJuego estado) {
-        this.estado = estado;
-    }
-
     public Dificultad getDificultad() {
         return dificultad;
     }
 
     public void setDificultad(Dificultad dificultad) {
         this.dificultad = dificultad;
+    }
+
+    public EstadoJuego getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoJuego estado) {
+        this.estado = estado;
     }
 
     public Replayability getReplayability() {

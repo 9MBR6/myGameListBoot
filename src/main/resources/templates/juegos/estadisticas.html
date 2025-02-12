@@ -37,15 +37,15 @@
     .chart-container {
         display: flex;
         justify-content: center;
-        align-items: center; /* Centra el contenido de forma vertical */
-        height: 300px; /* Asegura que tenga suficiente altura */
+        align-items: center;
+        height: 300px;
         padding: 10px;
     }
     .card-body {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center; /* Centra todos los elementos dentro de la card */
+        align-items: center;
     }
   </style>
 </head>
@@ -53,8 +53,8 @@
 
 <div class="sidebar">
   <h4 class="text-center">Menú</h4>
-  <a class="nav-link text-white" th:href="@{/usuario/perfil}">Mi Perfil</a>
   <a class="nav-link text-white" th:href="@{/juegos}">Lista de Juegos</a>
+  <a class="nav-link text-white" th:href="@{/juegos/completados}">Juegos Completados</a>
   <a class="nav-link text-white" th:href="@{/juegos/estadisticas}">Estadísticas</a>
 </div>
 
@@ -112,29 +112,33 @@
         </div>
       </div>
 
-      <!-- Gráfico 5 -->
+      <!-- Gráfico 5: Juegos por Año de Lanzamiento -->
       <div class="col">
         <div class="card shadow rounded">
           <div class="card-body">
-            <h5 class="text-center">Otra Estadística</h5>
+            <h5 class="text-center">Juegos por Año de Lanzamiento</h5>
             <div class="chart-container">
-              <div id="grafico5" style="width: 100%; height: 300px;"></div>
+              <div id="juegosAnioChart" style="width: 100%; height: 300px;"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Gráfico 6 -->
+      <!-- Gráfico 6: Total de Horas Jugadas (como número grande) -->
       <div class="col">
         <div class="card shadow rounded">
           <div class="card-body">
-            <h5 class="text-center">Otra Estadística</h5>
-            <div class="chart-container">
-              <div id="grafico6" style="width: 100%; height: 300px;"></div>
+            <h5 class="text-center">Total de Horas Jugadas</h5>
+            <div class="chart-container d-flex justify-content-center align-items-center">
+              <div class="total-horas" style="font-size: 3rem; font-weight: bold; color: #28a745;">
+                <!-- Mostramos el total de horas jugadas como número -->
+                <span th:text="${totalHorasJugadas}">0</span> horas
+              </div>
             </div>
           </div>
         </div>
       </div>
+
 
     </div>
   </div>
@@ -147,17 +151,20 @@
       var estadisticasPlataformas = /*[[${estadisticasPlataformas}]]*/ '{}';
       var estadisticasGenero = /*[[${estadisticasGenero}]]*/ '{}';
       var estadisticasJuegosEsteAnio = /*[[${juegosPasadosEsteAnio}]]*/ 0;
+      var juegosPorAnioLanzamiento = /*[[${juegosPorAnoLanzamiento}]]*/ 0;
 
       estadisticasEstados = JSON.parse(estadisticasEstados);
       estadisticasPlataformas = JSON.parse(estadisticasPlataformas);
       estadisticasGenero = JSON.parse(estadisticasGenero);
+      juegosPorAnioLanzamiento = JSON.parse(juegosPorAnioLanzamiento);
 
       console.log("Estados:", estadisticasEstados);
       console.log("Plataformas:", estadisticasPlataformas);
       console.log("Géneros:", estadisticasGenero);
       console.log("Pasados:", estadisticasJuegosEsteAnio);
+      console.log("Anios Lanzamiento:", juegosPorAnioLanzamiento);
 
-      google.charts.load('current', {'packages':['corechart']});
+      google.charts.load('current', {'packages':['corechart', 'bar']});
       google.charts.load('current', {'packages':['gauge']}); // Cargar el paquete correcto para el gráfico Gauge
       google.charts.setOnLoadCallback(() => {
           if (Object.keys(estadisticasEstados).length > 0) {
@@ -169,7 +176,10 @@
           if (Object.keys(estadisticasGenero).length > 0) {
               dibujarGraficoGeneros(estadisticasGenero);
           }
-              dibujarGraficoIndicador(estadisticasJuegosEsteAnio);
+          if (Object.keys(juegosPorAnioLanzamiento).length > 0) {
+              dibujarGraficoJuegosPorAnio(juegosPorAnioLanzamiento);
+          }
+          dibujarGraficoIndicador(estadisticasJuegosEsteAnio);
       });
 
       function dibujarGraficoEstados(datos) {
@@ -203,7 +213,6 @@
               legend: { position: 'none' },
               chartArea: { width: '70%' },
               hAxis: {
-                  title: 'Plataforma'
               },
               vAxis: {
                   title: 'Cantidad de Juegos',
@@ -249,6 +258,29 @@
           };
 
           var chart = new google.visualization.Gauge(document.getElementById('graficoIndicador'));
+          chart.draw(data, options);
+      }
+
+      function dibujarGraficoJuegosPorAnio(datos) {
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', 'Año');
+          data.addColumn('number', 'Cantidad');
+
+          Object.entries(datos).forEach(([anio, cantidad]) => {
+              data.addRow([anio, cantidad]);
+          });
+
+          var options = {
+              chartArea: { width: '60%' },
+              hAxis: {
+                  minValue: 0
+              },
+              vAxis: {
+                  title: 'Año'
+              }
+          };
+
+          var chart = new google.visualization.BarChart(document.getElementById('juegosAnioChart'));
           chart.draw(data, options);
       }
 

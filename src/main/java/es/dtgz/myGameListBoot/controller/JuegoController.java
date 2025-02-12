@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controlador de la aplicación encargado de gestionar las acciones relacionadas con los juegos.
+ * Permite listar, crear, editar, eliminar juegos, así como mostrar estadísticas.
+ */
 @Controller
 @RequestMapping("/juegos")
 public class JuegoController {
@@ -23,6 +27,12 @@ public class JuegoController {
     @Autowired
     private JuegoService juegoService;
 
+    /**
+     * Muestra la lista de todos los juegos.
+     *
+     * @param model Modelo utilizado para pasar datos a la vista
+     * @return La vista con la lista de juegos
+     */
     @GetMapping
     public String listJuegos(Model model) {
         logger.info("Listando todos los juegos");
@@ -30,6 +40,12 @@ public class JuegoController {
         return "juegos/juegos";
     }
 
+    /**
+     * Muestra el formulario para crear un nuevo juego.
+     *
+     * @param model Modelo utilizado para pasar datos a la vista
+     * @return La vista con el formulario para agregar un juego
+     */
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         logger.info("Mostrando formulario para crear un nuevo juego");
@@ -37,6 +53,12 @@ public class JuegoController {
         return "juegos/addJuego";
     }
 
+    /**
+     * Guarda un nuevo juego en la base de datos.
+     *
+     * @param juego El juego a guardar
+     * @return Redirige a la lista de juegos
+     */
     @PostMapping("/add")
     public String saveJuego(@ModelAttribute Juego juego) {
         logger.info("Guardando nuevo juego: {} (Nombre: {})", juego, juego.getTitulo());
@@ -44,6 +66,13 @@ public class JuegoController {
         return "redirect:/juegos";
     }
 
+    /**
+     * Muestra el formulario de edición de un juego existente.
+     *
+     * @param id El ID del juego a editar
+     * @param model Modelo utilizado para pasar datos a la vista
+     * @return La vista con el formulario de edición del juego
+     */
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         logger.info("Mostrando formulario de edición para el juego con ID: {}", id);
@@ -56,6 +85,13 @@ public class JuegoController {
         return "juegos/updateJuego";
     }
 
+    /**
+     * Actualiza un juego en la base de datos.
+     *
+     * @param id El ID del juego a actualizar
+     * @param juego El objeto juego con los datos actualizados
+     * @return Redirige a la lista de juegos
+     */
     @PostMapping("/update/{id}")
     public String updateJuego(@PathVariable Long id, @ModelAttribute Juego juego) {
         logger.info("Actualizando juego con ID: {}", id);
@@ -64,6 +100,12 @@ public class JuegoController {
         return "redirect:/juegos";
     }
 
+    /**
+     * Elimina un juego de la base de datos.
+     *
+     * @param id El ID del juego a eliminar
+     * @return Redirige a la lista de juegos
+     */
     @GetMapping("/delete/{id}")
     public String deleteJuego(@PathVariable Long id) {
         juegoService.getJuegoById(id).ifPresentOrElse(
@@ -76,6 +118,12 @@ public class JuegoController {
         return "redirect:/juegos";
     }
 
+    /**
+     * Muestra los juegos que han sido completados.
+     *
+     * @param model Modelo utilizado para pasar datos a la vista
+     * @return La vista con la lista de juegos completados
+     */
     @GetMapping("/completados")
     public String getJuegosCompletados(Model model) {
         List<Juego> juegosCompletados = juegoService.getJuegosCompletados();
@@ -83,35 +131,37 @@ public class JuegoController {
         return "juegos/completados"; // Nombre de la vista en Thymeleaf
     }
 
+    /**
+     * Muestra las estadísticas relacionadas con los juegos.
+     * Incluye estadísticas de estado, plataforma, género, juegos pasados este año,
+     * juegos por año de lanzamiento y total de horas jugadas.
+     *
+     * @param model Modelo utilizado para pasar datos a la vista
+     * @return La vista con las estadísticas de los juegos
+     * @throws JsonProcessingException Si ocurre un error al procesar los objetos a JSON
+     */
     @GetMapping("/estadisticas")
     public String estadisticas(Model model) throws JsonProcessingException {
         Map<String, Long> estadisticasEstados = juegoService.obtenerEstadisticasEstados();
         Map<String, Long> estadisticasPlataformas = juegoService.obtenerEstadisticasPlataformas();
         Map<String, Long> estadisticasGenero = juegoService.obtenerEstadisticasGenero();
-        long juegosPasadosEsteAnio = juegoService.obtenerJuegosPasadosEsteAnio(); // ✅ Nueva estadística
+        long juegosPasadosEsteAnio = juegoService.obtenerJuegosPasadosEsteAnio();
+        Map<Integer, Long> juegosPorAnoLanzamiento = juegoService.obtenerJuegosPorAnioLanzamiento();
+        long horasMaximasJugadas = juegoService.obtenerTotalHorasJugadas();
 
-        // Convertir mapas a JSON
         ObjectMapper objectMapper = new ObjectMapper();
         String estadisticasEstadosJson = objectMapper.writeValueAsString(estadisticasEstados);
         String estadisticasPlataformasJson = objectMapper.writeValueAsString(estadisticasPlataformas);
         String estadisticasGeneroJson = objectMapper.writeValueAsString(estadisticasGenero);
+        String juegosPorAnoLanzamientoJson = objectMapper.writeValueAsString(juegosPorAnoLanzamiento);
 
-        // Debug: Imprimir las estadísticas para verificar
-        System.out.println("Estadísticas de Estados: " + estadisticasEstados);
-        System.out.println("Estadísticas de Plataformas: " + estadisticasPlataformas);
-        System.out.println("Estadísticas de Género: " + estadisticasGenero);
-        System.out.println("Juegos Pasados este Año: " + juegosPasadosEsteAnio);
-
-        // Pasar los datos JSON a Thymeleaf
         model.addAttribute("estadisticasEstados", estadisticasEstadosJson);
         model.addAttribute("estadisticasPlataformas", estadisticasPlataformasJson);
         model.addAttribute("estadisticasGenero", estadisticasGeneroJson);
-        model.addAttribute("juegosPasadosEsteAnio", juegosPasadosEsteAnio); // ✅ Enviar a la vista
+        model.addAttribute("juegosPasadosEsteAnio", juegosPasadosEsteAnio);
+        model.addAttribute("juegosPorAnoLanzamiento", juegosPorAnoLanzamientoJson);
+        model.addAttribute("totalHorasJugadas", horasMaximasJugadas);
 
         return "juegos/estadisticas";
     }
-
-
-
-
 }
