@@ -65,7 +65,7 @@ Permite modificar los detalles de un juego previamente agregado.
 
 ### 4. **Eliminar un juego**
 Permite eliminar un juego de la lista.
-![eliminar](https://github.com/9MBR6/myGameListBoot/blob/main/Recursos/listaJuegos.png?raw=true)
+![eliminar](https://github.com/9MBR6/myGameListBoot/blob/main/Recursos/eliminar.png?raw=true)
 
 ### 5. **Ver estadísticas**
 Muestra estadísticas sobre los juegos, como:
