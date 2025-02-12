@@ -53,15 +53,19 @@ Define las entidades que se guardan en la base de datos.
 
 ### 1. **Listado de juegos**
 Se puede visualizar todos los juegos o filtrar los completados. El listado incluye información detallada sobre cada juego.
+![Lista de juegos](https://github.com/9MBR6/myGameListBoot/blob/main/Recursos/listaJuegos.png?raw=true)
 
 ### 2. **Crear un juego**
 Se puede agregar un nuevo juego proporcionando su título, plataforma, género, calificación, estado, entre otros detalles.
+![crear](https://github.com/9MBR6/myGameListBoot/blob/main/Recursos/a%C3%B1adirJuego.png?raw=true)
 
 ### 3. **Editar un juego**
 Permite modificar los detalles de un juego previamente agregado.
+![editar](https://github.com/9MBR6/myGameListBoot/blob/main/Recursos/editarJuego.png?raw=true)
 
 ### 4. **Eliminar un juego**
 Permite eliminar un juego de la lista.
+![eliminar](https://github.com/9MBR6/myGameListBoot/blob/main/Recursos/listaJuegos.png?raw=true)
 
 ### 5. **Ver estadísticas**
 Muestra estadísticas sobre los juegos, como:
@@ -70,10 +74,7 @@ Muestra estadísticas sobre los juegos, como:
 - Juegos por género.
 - Juegos jugados en el año actual.
 - Total de horas jugadas.
-
-## Instalación y ejecución
-
-### Requisitos previos
+![estadisticas](https://github.com/9MBR6/myGameListBoot/blob/main/Recursos/Estadisticas.png?raw=true)
 
 - **Java 17+**
 - **MariaDB** o cualquier otra base de datos compatible con JPA
