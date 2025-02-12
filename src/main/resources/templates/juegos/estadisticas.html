@@ -3,7 +3,7 @@
 <head>
   <title>Estadísticas de Juegos</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
   <style>
     body {
         background-color: #f8f9fa;
@@ -34,9 +34,18 @@
         flex-grow: 1;
         padding: 20px;
     }
-    .card {
-        margin-top: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    .chart-container {
+        display: flex;
+        justify-content: center;
+        align-items: center; /* Centra el contenido de forma vertical */
+        height: 300px; /* Asegura que tenga suficiente altura */
+        padding: 10px;
+    }
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center; /* Centra todos los elementos dentro de la card */
     }
   </style>
 </head>
@@ -50,71 +59,200 @@
 </div>
 
 <div class="content">
-  <h1 class="text-center">Estadísticas de Juegos</h1>
+  <h1 class="text-center mb-4">📊 Estadísticas de Juegos</h1>
 
-  <!-- Mostrar las estadísticas para ver si los datos están llegando -->
-  <p>Estadísticas de Estados: <span th:text="${estadisticasEstados}"></span></p>
-  <p>Estadísticas de Plataformas: <span th:text="${estadisticasPlataformas}"></span></p>
+  <div class="container">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
 
-  <!-- Gráfico de Estados de Juegos -->
-  <div class="card p-3">
-    <h5 class="text-center">Distribución de Estados de Juegos</h5>
-    <canvas id="estadoJuegosChart" width="400" height="400"></canvas>
+      <!-- Gráfico 1: Estados de Juegos -->
+      <div class="col">
+        <div class="card shadow rounded">
+          <div class="card-body">
+            <h5 class="text-center">Distribución de Estados</h5>
+            <div class="chart-container">
+              <div id="estadoJuegosChart" style="width: 100%; height: 300px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico 2: Juegos por Plataforma -->
+      <div class="col">
+        <div class="card shadow rounded">
+          <div class="card-body">
+            <h5 class="text-center">Juegos por Plataforma</h5>
+            <div class="chart-container">
+              <div id="plataformaChart" style="width: 100%; height: 300px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico 3: Juegos por Género -->
+      <div class="col">
+        <div class="card shadow rounded">
+          <div class="card-body">
+            <h5 class="text-center">Distribución de Juegos por Género</h5>
+            <div class="chart-container">
+              <div id="generoChart" style="width: 100%; height: 300px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico 4: Juegos Pasados este Año -->
+      <div class="col">
+        <div class="card shadow rounded">
+          <div class="card-body">
+            <h5 class="text-center">Juegos Pasados Este Año</h5>
+            <div class="chart-container">
+              <div id="graficoIndicador" style="width: 100%; height: 200px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico 5 -->
+      <div class="col">
+        <div class="card shadow rounded">
+          <div class="card-body">
+            <h5 class="text-center">Otra Estadística</h5>
+            <div class="chart-container">
+              <div id="grafico5" style="width: 100%; height: 300px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico 6 -->
+      <div class="col">
+        <div class="card shadow rounded">
+          <div class="card-body">
+            <h5 class="text-center">Otra Estadística</h5>
+            <div class="chart-container">
+              <div id="grafico6" style="width: 100%; height: 300px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <!-- Gráfico de Juegos por Plataforma -->
-  <div class="card p-3">
-    <h5 class="text-center">Cantidad de Juegos por Plataforma</h5>
-    <canvas id="plataformaChart" width="400" height="400"></canvas>
-  </div>
 </div>
 
-<script>
+<script th:inline="javascript">
   document.addEventListener("DOMContentLoaded", function () {
-      // Asegúrate de que los datos se están inyectando correctamente desde Thymeleaf
-      console.log("Estadísticas de Estados (JSON):", /*[[${estadisticasEstados}]]*/ '');
-      console.log("Estadísticas de Plataformas (JSON):", /*[[${estadisticasPlataformas}]]*/ '');
+      var estadisticasEstados = /*[[${estadisticasEstados}]]*/ '{}';
+      var estadisticasPlataformas = /*[[${estadisticasPlataformas}]]*/ '{}';
+      var estadisticasGenero = /*[[${estadisticasGenero}]]*/ '{}';
+      var estadisticasJuegosEsteAnio = /*[[${juegosPasadosEsteAnio}]]*/ 0;
 
-      var estadisticasEstados = JSON.parse(/*[[${estadisticasEstados}]]*/ '{}');
-      var estadisticasPlataformas = JSON.parse(/*[[${estadisticasPlataformas}]]*/ '{}');
+      estadisticasEstados = JSON.parse(estadisticasEstados);
+      estadisticasPlataformas = JSON.parse(estadisticasPlataformas);
+      estadisticasGenero = JSON.parse(estadisticasGenero);
 
-      // Verificación de los datos
       console.log("Estados:", estadisticasEstados);
       console.log("Plataformas:", estadisticasPlataformas);
+      console.log("Géneros:", estadisticasGenero);
+      console.log("Pasados:", estadisticasJuegosEsteAnio);
 
-      // Verificar si los objetos contienen datos antes de graficar
-      if (Object.keys(estadisticasEstados).length > 0 && Object.keys(estadisticasPlataformas).length > 0) {
-          // Gráfico de Estados de Juegos
-          var ctxEstados = document.getElementById("estadoJuegosChart").getContext("2d");
-          new Chart(ctxEstados, {
-              type: "pie",
-              data: {
-                  labels: Object.keys(estadisticasEstados),
-                  datasets: [{
-                      data: Object.values(estadisticasEstados),
-                      backgroundColor: ["#28a745", "#007bff", "#ffc107", "#dc3545"]
-                  }]
-              }
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.load('current', {'packages':['gauge']}); // Cargar el paquete correcto para el gráfico Gauge
+      google.charts.setOnLoadCallback(() => {
+          if (Object.keys(estadisticasEstados).length > 0) {
+              dibujarGraficoEstados(estadisticasEstados);
+          }
+          if (Object.keys(estadisticasPlataformas).length > 0) {
+              dibujarGraficoPlataformas(estadisticasPlataformas);
+          }
+          if (Object.keys(estadisticasGenero).length > 0) {
+              dibujarGraficoGeneros(estadisticasGenero);
+          }
+              dibujarGraficoIndicador(estadisticasJuegosEsteAnio);
+      });
+
+      function dibujarGraficoEstados(datos) {
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', 'Estado');
+          data.addColumn('number', 'Cantidad');
+
+          Object.entries(datos).forEach(([estado, cantidad]) => {
+              data.addRow([estado, cantidad]);
           });
 
-          // Gráfico de Juegos por Plataforma
-          var ctxPlataformas = document.getElementById("plataformaChart").getContext("2d");
-          new Chart(ctxPlataformas, {
-              type: "bar",
-              data: {
-                  labels: Object.keys(estadisticasPlataformas),
-                  datasets: [{
-                      label: "Cantidad de Juegos",
-                      data: Object.values(estadisticasPlataformas),
-                      backgroundColor: "#007bff"
-                  }]
-              }
-          });
-      } else {
-          console.error("No se recibieron datos válidos para los gráficos");
+          var options = {
+              pieHole: 0.4,
+              chartArea: { width: '80%' }
+          };
+
+          var chart = new google.visualization.PieChart(document.getElementById('estadoJuegosChart'));
+          chart.draw(data, options);
       }
+
+      function dibujarGraficoPlataformas(datos) {
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', 'Plataforma');
+          data.addColumn('number', 'Cantidad');
+
+          Object.entries(datos).forEach(([plataforma, cantidad]) => {
+              data.addRow([plataforma, cantidad]);
+          });
+
+          var options = {
+              legend: { position: 'none' },
+              chartArea: { width: '70%' },
+              hAxis: {
+                  title: 'Plataforma'
+              },
+              vAxis: {
+                  title: 'Cantidad de Juegos',
+                  minValue: 0
+              }
+          };
+
+          var chart = new google.visualization.ColumnChart(document.getElementById('plataformaChart'));
+          chart.draw(data, options);
+      }
+
+      function dibujarGraficoGeneros(datos) {
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', 'Género');
+          data.addColumn('number', 'Cantidad');
+
+          Object.entries(datos).forEach(([genero, cantidad]) => {
+              data.addRow([genero, cantidad]);
+          });
+
+          var options = {
+              pieHole: 0.4,
+              chartArea: { width: '80%' }
+          };
+
+          var chart = new google.visualization.PieChart(document.getElementById('generoChart'));
+          chart.draw(data, options);
+      }
+
+      function dibujarGraficoIndicador(juegosPasados) {
+          var data = google.visualization.arrayToDataTable([
+              ['Label', 'Value'],
+              ['', juegosPasados]
+          ]);
+
+          var options = {
+              width: '100%',
+              height: 200,
+              redFrom: 0, redTo: 10,
+              yellowFrom: 10, yellowTo: 20,
+              greenFrom: 20, greenTo: 100,
+              minorTicks: 5
+          };
+
+          var chart = new google.visualization.Gauge(document.getElementById('graficoIndicador'));
+          chart.draw(data, options);
+      }
+
   });
 </script>
-
 </body>
 </html>

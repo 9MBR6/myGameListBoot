@@ -87,21 +87,30 @@ public class JuegoController {
     public String estadisticas(Model model) throws JsonProcessingException {
         Map<String, Long> estadisticasEstados = juegoService.obtenerEstadisticasEstados();
         Map<String, Long> estadisticasPlataformas = juegoService.obtenerEstadisticasPlataformas();
+        Map<String, Long> estadisticasGenero = juegoService.obtenerEstadisticasGenero();
+        long juegosPasadosEsteAnio = juegoService.obtenerJuegosPasadosEsteAnio(); // ✅ Nueva estadística
 
         // Convertir mapas a JSON
         ObjectMapper objectMapper = new ObjectMapper();
         String estadisticasEstadosJson = objectMapper.writeValueAsString(estadisticasEstados);
         String estadisticasPlataformasJson = objectMapper.writeValueAsString(estadisticasPlataformas);
+        String estadisticasGeneroJson = objectMapper.writeValueAsString(estadisticasGenero);
 
         // Debug: Imprimir las estadísticas para verificar
         System.out.println("Estadísticas de Estados: " + estadisticasEstados);
         System.out.println("Estadísticas de Plataformas: " + estadisticasPlataformas);
+        System.out.println("Estadísticas de Género: " + estadisticasGenero);
+        System.out.println("Juegos Pasados este Año: " + juegosPasadosEsteAnio);
 
         // Pasar los datos JSON a Thymeleaf
         model.addAttribute("estadisticasEstados", estadisticasEstadosJson);
         model.addAttribute("estadisticasPlataformas", estadisticasPlataformasJson);
+        model.addAttribute("estadisticasGenero", estadisticasGeneroJson);
+        model.addAttribute("juegosPasadosEsteAnio", juegosPasadosEsteAnio); // ✅ Enviar a la vista
+
         return "juegos/estadisticas";
     }
+
 
 
 
